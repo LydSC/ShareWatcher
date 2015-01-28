@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<database>
+ <name>*dbname*</name>
+ <create>true</create>
+ <overwrite>true</overwrite>
+ <charset>utf8</charset>
+ <table>
+  <name>*dbprefix*share_watcher</name>
+  <declaration>
+    <field>
+      <name>id_share</name>
+      <type>integer</type>
+      <default>0</default>
+      <notnull>true</notnull>          
+      <length>11</length>
+      <autoincrement>1</autoincrement>      
+    </field>
+    <field>
+      <name>date_download</name>
+      <type>datetime</type>
+      <default>0000-00-00 00:00:00</default>
+      <notnull>true</notnull>        
+    </field>      
+    <field>
+      <name>notification_needed</name>
+      <type>integer</type>
+      <default>0</default>
+      <notnull>true</notnull>        
+    </field>
+    <field>
+      <name>notification_sended</name>
+      <type>integer</type>
+      <default>0</default>
+      <notnull>true</notnull>        
+    </field>     
+  </declaration>
+</table>
+</database>

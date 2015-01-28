@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<info>
+    <id>sharewatcher</id>
+    <name>Share Watcher</name>
+    <description>Education application</description>
+    <version>0.6</version>
+    <licence>AGPL</licence>
+    <author>Lydéric Saint Criq / CNRS</author>
+    <require>7</require>
+</info>

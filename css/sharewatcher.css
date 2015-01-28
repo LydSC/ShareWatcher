@@ -1,0 +1,35 @@
+#hello {
+    margin: 1em;
+    text-align: center;
+    font-size: 300%;
+    font-weight: bold;
+}
+#footer {
+    text-align: center;
+    font-size: 80%;
+}
+
+#content.app-sharewatcher
+{
+	width: 100%;
+	margin: 25px 50px;
+}
+
+#filestable a.action
+{
+    padding: auto 14px;        
+    display: block !important;
+}
+
+#filestable span.action
+{
+    padding: auto 14px;        
+    display: inline-block !important;
+}
+
+#filestable ol
+{
+	list-style-type: none;
+}
+
+
