@@ -11,6 +11,20 @@ Cron task is used to check last downloaded files and to notify users who ask for
 
 Hooks abour sharing are not functionnal in Owncloud v7. This app needs OC8 hooks to be finished
 
+## Shell
+To list all shared files by users :
+
+```
+cd [owncloud]/
+./occ sharewatcher:download -l
+```
+
+To simulate the missing share hook, you can download a file by using : 
+```
+cd [owncloud]/
+./occ sharewatcher:download [id_share]
+```
+where [id_share] is the id of the sharing in DB. Use -l to see all sharings.
 
 ## Contributing
 
