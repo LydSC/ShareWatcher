@@ -62,7 +62,7 @@
 									<?php if($sharing['share_with'] != null ): ?>
 										<strong><?php echo $sharing['share_with']; ?></strong>
 									<?php else: ?>
-										<strong><i><?php p($l->t('mail adress')); ?></i></strong>
+										<strong><i><?php p($l->t('shared by email')); ?></i></strong>
 									<?php endif; ?>	
 								</li>
 							<?php endforeach; ?>
