@@ -21,7 +21,7 @@
 
     // the icon that will be shown in the navigation
     // this file needs to exist in img/example.png
-    'icon' => \OCP\Util::imagePath('sharewatcher', 'helloworld.svg'),
+    'icon' => \OCP\Util::imagePath('sharewatcher', 'sharewatcher.svg'),
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app
