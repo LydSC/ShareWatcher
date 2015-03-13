@@ -11,6 +11,20 @@ Cron task is used to check last downloaded files and to notify users who ask for
 
 Hooks abour sharing are not functionnal in Owncloud v7. This app needs OC8 hooks to be finished
 
+## Shell
+To list all shared files by users :
+
+```
+cd [owncloud]/
+./occ sharewatcher:download -l
+```
+
+To simulate the missing share hook, you can download a file by using : 
+```
+cd [owncloud]/
+./occ sharewatcher:download [id_share]
+```
+where [id_share] is the id of the sharing in DB. Use -l to see all sharings.
 
 ## Contributing
 
@@ -22,10 +36,7 @@ If you want to be informed about this ownCloud project at CNRS, please contact d
 
 |                      |                                          |
 |:---------------------|:-----------------------------------------|
-| **Author:**          | Lydéric SAINT CRIQ (lyderic.saint-criq@cnrs-dir.fr))
+| **Author:**          | Lydéric SAINT CRIQ (lyderic.saint-criq@cnrs-dir.fr)
 | **Copyright:**       | Copyright (c) 2015 CNRS
 | **License:**         | AGPL v3, see the COPYING file.
 
-* Icons are from [GLYPHICONS.com](http://glyphicons.com/) released under [Creative Commons Attribution 3.0 Unported (CC BY 3.0)](http://creativecommons.org/licenses/by/3.0/).
-* This app use an angular directive provided on github by [earlonrails](http://earlonrails.github.io/angular-chartjs-directive/).
-* [Chart.js](http://www.chartjs.org/) is open source and available under the [MIT license](http://opensource.org/licenses/MIT).
