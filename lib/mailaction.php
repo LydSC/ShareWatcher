@@ -38,7 +38,7 @@ Class MailAction
     */
     public function mailNotificationcreation($sharings)
     {    	
-    	$mail['subject'] = $this->l->t("MyCore - Shared files downloaded");
+    	$mail['subject'] = $this->l->t("My Core - Shared files downloaded");
 
     	foreach ($sharings as $key => $sharing)
     	{    		
