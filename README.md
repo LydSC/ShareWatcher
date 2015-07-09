@@ -2,7 +2,7 @@
 
 !! NOT FUNCTIONNAL !!
 
-Owncloud pre 8 app where the user can see all hisshared files and decided to nbe notified when the file is downloaded
+Owncloud pre 8 app where the user can see all his shared files and decided to be notified when the file is downloaded
 
 
 Cron task is used to check last downloaded files and to notify users who ask for it
