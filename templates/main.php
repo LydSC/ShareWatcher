@@ -38,8 +38,8 @@
 	<table id="filestable" class="">
 		<thead>
 			<tr>
-				<th><?php p($l->t('Filename')); ?></th>
-				<th><?php p($l->t('Share with')); ?></th>
+				<th><?php p($l->t('Filename/Folder')); ?></th>
+				<th><?php p($l->t('Shared with')); ?></th>
 				<th><?php p($l->t('Downloaded ?')); ?></th>
 				<th><?php p($l->t('Be notified ?')); ?></th>				
 				<th><?php p($l->t('Unshare')); ?></th>
@@ -60,9 +60,19 @@
 									data-share-with='<?php echo $sharing['share_with']; ?>'
 									data-share-type='<?php echo $sharing['share_type']; ?>'>
 									<?php if($sharing['share_with'] != null ): ?>
-										<strong><?php echo $sharing['share_with']; ?></strong>
+										<strong>
+											<?php if($sharing['share_type'] == "2"): ?>
+												&nbsp|-&nbsp
+											<?php endif; ?>
+											<?php echo $sharing['share_with']; ?>
+										</strong>
+											<?php if($sharing['share_type'] == "1"): ?>
+												<?php p($l->t('(group)')); ?>
+												<i><?php p($l->t('including')); ?></i>
+											<?php endif; ?>
+										
 									<?php else: ?>
-										<strong><i><?php p($l->t('shared by email')); ?></i></strong>
+										<strong><i><?php p($l->t('shared by link')); ?></i></strong>
 									<?php endif; ?>	
 								</li>
 							<?php endforeach; ?>
@@ -76,10 +86,13 @@
 									data-type='<?php echo $sharing['item_type']; ?>' 
 									data-share-with='<?php echo $sharing['share_with']; ?>'
 									data-share-type='<?php echo $sharing['share_type']; ?>'> 	
-									<?php if($sharing['date_download'] != null AND $sharing['date_download'] != '0000-00-00 00:00:00'): ?>
-										<?php p($l->t('Yes')); ?>
-									<?php else: ?>
-										<?php p($l->t('No')); ?>
+
+									<?php if($sharing['share_type'] != "2"): ?>
+										<?php if($sharing['date_download'] != null AND $sharing['date_download'] != '0000-00-00 00:00:00'): ?>
+											<?php p($l->t('Yes')); ?>
+										<?php else: ?>
+											<?php p($l->t('No')); ?>
+										<?php endif; ?>
 									<?php endif; ?>
 								</li>
 								<?php endforeach; ?>
@@ -94,20 +107,21 @@
 										data-share-with='<?php echo $sharing['share_with']; ?>'
 										data-share-type='<?php echo $sharing['share_type']; ?>'
 									>						
+										<?php if($sharing['share_type'] != "2"): ?>
+											<input name='cb_<?php echo $sharing['share_with']; ?>_<?php echo $sharing['id']; ?>' 
+												   type="checkbox"
+												   ng-click="getNotification($event)"
+												   original-title='<?php p($l->t('Be notified if %s download %s', array($sharing['share_with'], $file))); ?>'
+													<?php if(!is_null($sharing['date_download']) AND $sharing['date_download'] != '0000-00-00 00:00:00' ): ?>
+														disabled
+													<?php endif; ?>								    								 
 
-										<input name='cb_<?php echo $sharing['share_with']; ?>_<?php echo $sharing['id']; ?>' 
-											   type="checkbox"
-											   ng-click="getNotification($event)"
-											   original-title='<?php p($l->t('Be notified if %s download %s', array($sharing['share_with'], $file))); ?>'
-												<?php if(!is_null($sharing['date_download']) AND $sharing['date_download'] != '0000-00-00 00:00:00' ): ?>
-													disabled
-												<?php endif; ?>								    								 
-
-												<?php if($sharing['notification_needed'] == '1'): ?>
-													checked												
-												<?php endif; ?>
-										/>
-										<span class="action notification"></span>
+													<?php if($sharing['notification_needed'] == '1'): ?>
+														checked												
+													<?php endif; ?>
+											/>
+											<span class="action notification"></span>
+										<?php endif; ?>
 									</li>
 								<?php endforeach; ?>
 							</ul>
@@ -115,16 +129,18 @@
 						<td>
 							<ol>
 								<?php foreach($sharings as $sharing): ?>
-								<li data-id='<?php p($sharing['id']); ?>' 
-									data-item-source='<?php echo $sharing['fileid']; ?>'
-									data-type='<?php p($sharing['item_type']); ?>' 
-									data-share-with='<?php p($sharing['share_with']); ?>'
-									data-share-type='<?php p($sharing['share_type']); ?>'> 	
-									<a class="action delete delete-icon" 
-									   original-title="<?php p($l->t('Unshare %s with %s', array($file, $sharing['share_with']))); ?>"  
-									   href="#" 
-									   ng-click="unshare($event)">&nbsp;</a>
-								</li>
+									<?php if($sharing['share_type'] != "2"): ?>
+										<li data-id='<?php p($sharing['id']); ?>' 
+											data-item-source='<?php echo $sharing['fileid']; ?>'
+											data-type='<?php p($sharing['item_type']); ?>' 
+											data-share-with='<?php p($sharing['share_with']); ?>'
+											data-share-type='<?php p($sharing['share_type']); ?>'> 	
+											<a class="action delete delete-icon icon-delete" 
+											   original-title="<?php p($l->t('Unshare %s with %s', array($file, $sharing['share_with']))); ?>"  
+											   href="#" 
+											   ng-click="unshare($event)">&nbsp;</a>
+										</li>
+									<?php endif; ?>
 								<?php endforeach; ?>
 							</ol>
 						</td>	

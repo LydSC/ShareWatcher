@@ -1,11 +1,10 @@
 <?php
 
-namespace OCA\ShareWatcher;
+namespace OCA\ShareWatcher\AppInfo;
 
-use \OCA\ShareWatcher\App\ShareWatcher;
-
-$application = new ShareWatcher();
+$application = new Application();
 $application->registerRoutes($this, array('routes' => array(
     // page
     array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
+    array('name' => 'api#notification', 'url' => '/notification', 'verb' => 'POST'),
 )));

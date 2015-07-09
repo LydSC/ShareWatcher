@@ -114,6 +114,7 @@ sharewatcher.controller('ShareController',
 					};
 
 			var url = OC.filePath('sharewatcher','ajax','notification.php');
+			var url = OC.generateUrl('/apps/sharewatcher/notification');
 			var responsePromise = $http({
 			    method: 'POST',
 			    url: url,
@@ -128,18 +129,19 @@ sharewatcher.controller('ShareController',
 			});
 
 
-			responsePromise.success(function(response, status, headers, config) {                
+			responsePromise.success(function(response, status, headers, config) {     
+				target.parent().children(".action").removeClass('progress-icon');
+                target.show();           
                 // Hiding if success
                 if(response.status == "success")
-                {
-                	target.parent().children(".action").removeClass('progress-icon');
-                	target.show();
+                {                	
                 	// @todo if no more share, hide the tr line
                 }
                 // @todo better managing errors
                	else
                	{
-               		alert('error');
+               		//alert(response);
+               		//alert('error : ' + response.status);
                	}
             });
             // @todo better managing errors

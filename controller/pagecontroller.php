@@ -10,8 +10,12 @@
 namespace OCA\ShareWatcher\Controller;
 
 use \OCP\AppFramework\Controller;
-use OCA\ShareWatcher\App;
-use \OCP\User;
+use OCA\ShareWatcher\AppInfo\Application as ShareWatcher;
+use OCP\User;
+use OCP\IRequest;
+use OCP\IConfig;
+use OCP\IL10N;
+
 
 class PageController extends Controller {
 
@@ -42,7 +46,9 @@ class PageController extends Controller {
         \OCP\User::checkLoggedIn();
         $r = \OCP\App::checkAppEnabled('sharewatcher');
 
-        $files_shared = App\ShareWatcher::getAllSharing(User::getUser());
+        $app = new ShareWatcher();
+
+        $files_shared = $app->getAllSharing(User::getUser());
         
         return $this->render('main', array(
             'uid'           => $this->userId,
