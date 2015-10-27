@@ -9,9 +9,9 @@ Cron task is used to check last downloaded files and to notify users who ask for
 
 ## Limits 
 
-Hooks abour sharing are not functionnal in Owncloud v7. This app needs OC8 hooks to be finished
+Hooks about sharing are not functionnal in Owncloud v7. This app needs OC8 hooks to be finished
 
-First try :
+First try without hooks. Need to modify those files in Core Owncloud :
 
  - app/files/ajax/download.php 
 ```
