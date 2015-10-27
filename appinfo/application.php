@@ -60,8 +60,8 @@ class Application extends App {
             return \OCP\User::getUser();
         });
 
-        $container->registerService('L10N', function($c) {
-            return \OC_L10N::get($c['AppName']);
+        $container->registerService('L10N', function($c) {            
+            return $c->query('ServerContainer')->getL10N($c->query('AppName'));
         });
 
         $container->registerService('CoreConfig', function($c) {
@@ -91,6 +91,8 @@ class Application extends App {
         $container->registerService('L10N', function($c) {
             return $c->query('ServerContainer')->getL10N($c->query('AppName'));
         });
+
+        return;
     }
 
     /**
@@ -336,6 +338,106 @@ class Application extends App {
 
         return $user;
 
+    }
+
+
+    /**
+    * @param string name_group
+    * @return array users
+    */
+    public function getUsersInGroup($name_group)
+    {
+        $sql = "SELECT uid 
+                FROM *PREFIX*group_user                
+                WHERE gid = ? ";
+
+        $query = DB::prepare($sql);
+
+        $query->bindValue(1, $name_group, \PDO::PARAM_STR);
+        $result = $query->execute();
+
+        while($row = $result->fetchRow())
+        {
+            $users[] = $row['uid'];            
+        }
+
+        return $users;
+        
+    }
+
+
+    /**
+    * @param string user
+    * @param string dir
+    * @param Array files_list
+    * @return boolean 
+    *
+    */
+    static public function checkIfSharedItem($user, $dir, $filename)
+    {
+
+        //Check if the item is a shared one        
+        $file_target = $dir.$filename;
+        $sql = "SELECT * FROM oc_share, oc_group_user
+                WHERE 
+                (   share_with = ?  
+                    OR 
+                    (oc_share.share_type = 1 AND oc_group_user.uid = ? AND oc_group_user.gid = oc_share.share_with)
+                )
+                AND file_target = ?";
+
+        $query = DB::prepare($sql);
+
+        $query->bindValue(1, $user, \PDO::PARAM_STR);
+        $query->bindValue(2, $user, \PDO::PARAM_STR);
+        $query->bindValue(3, $file_target, \PDO::PARAM_STR);
+        
+        $result = $query->execute();
+
+        $row = $result->fetch();
+
+        return $row;
+        
+    }
+
+
+    public function setItemIsDownloaded($id_share)
+    {
+        $sql = "SELECT * FROM *PREFIX*share   
+                    LEFT JOIN *PREFIX*share_watcher ON id = id_share
+                    INNER JOIN *PREFIX*filecache ON fileid = item_source
+                    WHERE id = ?";
+        $query = \OCP\DB::prepare($sql);
+        $query->bindParam(1, $id_share, \PDO::PARAM_STR);
+        $result = $query->execute();
+
+        while($row = $result->fetchRow()) {            
+            $shares[] = $row;
+        }
+        
+        if(count($shares) == 1)
+        {            
+            if(isset($shares[0]['id_share']) AND !is_null($shares[0]['id_share']))
+            {
+                if($shares[0]['date_download'] != "0000-00-00 00:00:00")
+                    throw new \Exception("Can't download, share already downloaded");
+
+                $sql = "UPDATE *PREFIX*share_watcher SET date_download = NOW() WHERE id_share = ?";
+                $query = \OCP\DB::prepare($sql);
+
+                $query->bindParam(1, $id_share, \PDO::PARAM_STR);
+                
+                $result = $query->execute();
+            }        
+            else
+            {
+                $sql = "INSERT INTO *PREFIX*share_watcher (id_share, date_download, notification_needed, notification_sended) VALUES (?, NOW(), '1', '0')";
+                $query = \OCP\DB::prepare($sql);
+
+                $query->bindValue(1, $id_share, \PDO::PARAM_STR);    
+                $result = $query->execute();                
+            }
+        }
     }
 
 }

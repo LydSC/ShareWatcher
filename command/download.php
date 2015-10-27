@@ -17,6 +17,8 @@ use Symfony\Component\Console\Input\InputOption;
 
 use OC\DB\Connection;
 
+use OCA\ShareWatcher\AppInfo\Application as ShareWatcher;
+
 class Download extends Command {
 
 	protected function configure() {
@@ -54,74 +56,26 @@ class Download extends Command {
 
     protected function download($output, $id_share)
     {
+        $app = new ShareWatcher();
+    	$app->setItemIsDownloaded($id_share);
 
-    	$sql = "SELECT * FROM *PREFIX*share   
-        			LEFT JOIN *PREFIX*share_watcher ON id = id_share
-        			INNER JOIN *PREFIX*filecache ON fileid = item_source
-        			WHERE id = ?";
-        $query = \OCP\DB::prepare($sql);
-        $query->bindParam(1, $id_share, \PDO::PARAM_STR);
-        $result = $query->execute();
+        $sql = "SELECT * FROM *PREFIX*share             		
+        		WHERE id = ?";
 
-        while($row = $result->fetchRow()) {            
-            $shares[] = $row;
+    	$query = \OCP\DB::prepare($sql);      	        	
+
+    	$query->bindParam(1, $id_share, \PDO::PARAM_STR);
+
+    	$result = $query->execute();
+
+    	while($row = $result->fetchRow()) {
+            $files[] = $row;	            
         }
+    
+
+        $output->writeln($files[0]['file_target']. " downloaded by ".$files[0]['share_with']);
+
         
-        if(count($shares) == 1)
-        {
-        	var_dump($shares[0]['id_share']);
-        	if(isset($shares[0]['id_share']) AND !is_null($shares[0]['id_share']))
-        	{
-        		if($shares[0]['date_download'] != "0000-00-00 00:00:00")
-        			throw new \Exception("Can't download, share already downloaded");
-
-	            $sql = "UPDATE *PREFIX*share_watcher SET date_download = NOW() WHERE id_share = ?";
-	            $query = \OCP\DB::prepare($sql);
-
-	            $query->bindParam(1, $id_share, \PDO::PARAM_STR);
-	            
-	            $result = $query->execute();
-        	}
-        /*$sql = "SELECT * FROM *PREFIX*share_watcher WHERE id_share = ?";
-        
-        $query = \OCP\DB::prepare($sql);
-        $query->bindParam(1, $id_share, \PDO::PARAM_STR);
-        $result = $query->execute();
-
-        while($row = $result->fetchRow()) {            
-            $shares[] = $row;
-        }
-        */
-        	else
-        	{
-        		$sql = "INSERT INTO *PREFIX*share_watcher (id_share, date_download, notification_needed, notification_sended) VALUES (?, NOW(), '1', '0')";
-            	$query = \OCP\DB::prepare($sql);
-
-            	$query->bindValue(1, $id_share, \PDO::PARAM_STR);    
-            	$result = $query->execute();        		
-	        }
-
-            $sql = "SELECT * FROM *PREFIX*share             		
-            		WHERE id = ?";
-
-        	$query = \OCP\DB::prepare($sql);      	        	
-
-        	$query->bindParam(1, $id_share, \PDO::PARAM_STR);
-
-        	$result = $query->execute();
-
-        	while($row = $result->fetchRow()) {
-	            $files[] = $row;	            
-	        }
-	    
-
-	        $output->writeln($files[0]['file_target']. " downloaded by ".$files[0]['share_with']);
-
-        }
-        else
-        {
-        	throw new \Exception("Can't download, id_share doesn't exist");
-        }
     }
 
     protected function listAllSharesByUsers($output)
