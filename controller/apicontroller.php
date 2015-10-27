@@ -61,4 +61,32 @@ class ApiController extends Controller {
 
     }
 
+    /**
+    * @return Array Users list with the name_group in $_GET
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+    public function getusersingroup()
+    {
+    	// Sanity checks
+		\OCP\JSON::callCheck ( );
+		\OCP\JSON::checkLoggedIn ( );
+		\OCP\JSON::checkAppEnabled ( 'sharewatcher' );
+
+		try{
+			$app = new ShareWatcher();		 
+
+			$listUsers = $app->getUsersInGroup(htmlspecialchars($_GET['group']));
+
+			\OCP\JSON::success(array("result" => $listUsers));
+		}
+		catch(Exception $e)
+		{
+			//var_dump($e);
+			\OCP\JSON::error();
+		}		
+
+		
+    }
+
 }
