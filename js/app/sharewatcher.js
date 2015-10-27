@@ -113,7 +113,7 @@ sharewatcher.controller('ShareController',
 					    "notification_needed": notification_needed
 					};
 
-			var url = OC.filePath('sharewatcher','ajax','notification.php');
+			
 			var url = OC.generateUrl('/apps/sharewatcher/notification');
 			var responsePromise = $http({
 			    method: 'POST',
@@ -150,6 +150,71 @@ sharewatcher.controller('ShareController',
             });
 			
 		};
+
+		/**
+		* Show users in group using api#controller ShareWatcher
+		*/
+		$scope.getUsersInGroup = function(event){
+			var target = angular.element(event.target); 
+			/**
+			* Get the current data of the group to sho
+			*/
+			var infos = target.parent();					
+
+			/**
+			* Forge the url with the name_group in parameter
+			*/
+			var url = OC.generateUrl('/apps/sharewatcher/getUsersInGroup?group=' + infos.attr('data-share-with'));	
+			var responsePromise = $http({
+			    method: 'GET',
+			    url: url,				    
+			});
+
+			responsePromise.success(function(response, status, headers, config) {     
+				
+				/**
+				* Bad way to fix a bug 
+				* A "NULL" always end the response. I delete it
+				*/ 
+				var response = response.replace('"}null', '"}');
+
+				/**
+				* Get the JSON from the response
+				*/
+				var json_result = JSON.parse(response);
+				
+				if(json_result.status == 'success')
+				{							
+					/**
+					* Get the id of the shared ressource to be able to find where to display the users list
+					*/
+                	var item_source = infos.attr('data-item-source');        	
+                	var div_result = $('li[data-item-source=' + item_source +'] > div.users_in_group[data-share-with=' + infos.attr('data-share-with') +']');
+
+                	/**
+                	* Create the "list" to display
+                	*/
+                	var display = "";
+                	json_result.result.forEach(function(element, index){
+                		display += "<strong>|- " + element + "</strong><br/>";
+                	});
+                }
+
+                /**
+                * Put the display in the right div
+                */
+                div_result.html(display); 
+            });
+
+            // @todo better managing errors
+            responsePromise.error(function(data, status, headers, config) {
+                alert("AJAX failed!");
+            });
+
+		};
     }
 );
+
+
+
 
