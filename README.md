@@ -11,6 +11,56 @@ Cron task is used to check last downloaded files and to notify users who ask for
 
 Hooks abour sharing are not functionnal in Owncloud v7. This app needs OC8 hooks to be finished
 
+First try :
+
+ - app/files/ajax/download.php 
+```
+/***
+* USE ShareWatcher App
+*/
+use OCA\ShareWatcher\AppInfo\Application as ShareWatcher;
+
+// Check if we are a user
+OCP\User::checkLoggedIn();
+\OC::$server->getSession()->close();
+
+$files = isset($_GET['files']) ? (string)$_GET['files'] : '';
+$dir = isset($_GET['dir']) ? (string)$_GET['dir'] : '';
+
+$files_list = json_decode($files);
+// in case we get only a single file
+if (!is_array($files_list)) {
+	$files_list = array($files);
+}
+
+/***
+* START ShareWatcher App
+*/
+// Check if its the downloading of a shared item
+try{
+	// Foreach files downloaded
+	foreach ($files_list as $key => $filename) {
+		// it is !
+		if($shared_item = ShareWatcher::checkIfSharedItem($_SESSION['user_id'], $dir, $filename))
+		{
+			// Save in db for the ShareWatcher App			
+			ShareWatcher::setItemIsDownloaded($shared_item['id']);
+		}
+	}
+
+}
+catch (Exception $e)
+{
+	// Do nothing
+	// @todo log !
+}
+/***
+* END ShareWatcher App
+*/
+
+OC_Files::get($dir, $files_list, $_SERVER['REQUEST_METHOD'] == 'HEAD');
+```
+
 ## Shell
 To list all shared files by users :
 
