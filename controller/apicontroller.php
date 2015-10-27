@@ -1,7 +1,8 @@
 <?php
 namespace OCA\ShareWatcher\Controller;
 
-use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\APIController as OCAPIController;
+use \OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -9,7 +10,7 @@ use OCP\JSON;
 
 use OCA\ShareWatcher\AppInfo\Application as ShareWatcher;
 
-class ApiController extends Controller {
+class ApiController extends OCAPIController {
 
 	public function __construct($appName, IRequest $request, IConfig $settings, $userId){
         parent::__construct($appName, $request);
@@ -79,6 +80,7 @@ class ApiController extends Controller {
 			$listUsers = $app->getUsersInGroup(htmlspecialchars($_GET['group']));
 
 			\OCP\JSON::success(array("result" => $listUsers));
+			//return new JSONResponse(array("result" => $listUsers, "status" => "success"));
 		}
 		catch(Exception $e)
 		{
